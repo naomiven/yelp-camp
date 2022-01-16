@@ -1,18 +1,19 @@
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
+const engine = require('ejs-mate');
 const methodOverride = require('method-override');
 const Campground = require('./models/campground');
 const campground = require('./models/campground');
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp')
-.then(() => {
-    console.log('MONGO CONNECTION OPEN!')
-})
-.catch(err => {
-    console.log('OH NO MONGO CONNECTION ERROR!')
-    console.log(err)
-})
+    .then(() => {
+        console.log('MONGO CONNECTION OPEN!')
+    })
+    .catch(err => {
+        console.log('OH NO MONGO CONNECTION ERROR!')
+        console.log(err)
+    })
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
@@ -22,11 +23,13 @@ db.once("open", () => {
 
 const app = express();
 
+// Use ejs-mate as engine instea of ejs
+app.engine('ejs', engine);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // Tell express to parse req.body
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 
 app.get('/', (req, res) => {
@@ -58,7 +61,9 @@ app.post('/campgrounds', async (req, res) => {
 
 // Show
 app.get('/campgrounds/:id', async (req, res) => {
+    console.log(req.params.id)
     const campground = await Campground.findById(req.params.id);
+    console.dir(campground)
     res.render('campgrounds/show', { campground });
 })
 
