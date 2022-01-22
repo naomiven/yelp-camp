@@ -6,9 +6,6 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const ExpressError = require('./utils/ExpressError');
 const methodOverride = require('method-override');
-const passport = require('passport');
-const LocalStrategy = require('passport-local');
-const User = require('./models/user');
 
 const campgrounds = require('./routes/campgrounds');
 const reviews = require('./routes/reviews');
@@ -46,17 +43,6 @@ const sessionConfig = {
 app.use(session(sessionConfig));
 app.use(flash());
 
-// Initialize passport. Session must be used for persisent login
-app.use(passport.initialize());
-app.use(passport.session());
-// Static method authenticate() was added to User model.
-// authenticate() does all the hashing/salts stuff
-passport.use(new LocalStrategy(User.authenticate()));
-
-// Tell passport how to serialize user -> how to store user into a session
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());   // How to unstore user from session
-
 // Set up flash middleware before route handler so that we'll have access to
 // locals in our template, no need to pass through in eg., redirect pages
 app.use((req, res, next) => {
@@ -64,13 +50,6 @@ app.use((req, res, next) => {
     res.locals.error = req.flash('error');
     next();
 })
-
-// app.get('/fakeUser', async (req, res) => {
-//     const user = new User({ email: 'naooo@gmail.com', username: 'naooo' });
-//     // Registers new user with password taken care of
-//     const newUser = await User.register(user, 'naooo');
-//     res.send(newUser);
-// })
 
 // Use routes with specified prefixes
 app.use('/campgrounds', campgrounds);
