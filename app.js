@@ -10,8 +10,9 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
 
-const campgrounds = require('./routes/campgrounds');
-const reviews = require('./routes/reviews');
+const userRoutes = require('./routes/users');
+const campgroundRoutes = require('./routes/campgrounds');
+const reviewRoutes = require('./routes/reviews');
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp');
 
@@ -60,6 +61,7 @@ passport.deserializeUser(User.deserializeUser());   // How to unstore user from 
 // Set up flash middleware before route handler so that we'll have access to
 // locals in our template, no need to pass through in eg., redirect pages
 app.use((req, res, next) => {
+    res.locals.currentUser = req.user;  // For showing/hiding Login/Register/Logout buttons
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
     next();
@@ -73,8 +75,9 @@ app.use((req, res, next) => {
 // })
 
 // Use routes with specified prefixes
-app.use('/campgrounds', campgrounds);
-app.use('/campgrounds/:id/reviews', reviews);
+app.use('/', userRoutes);
+app.use('/campgrounds', campgroundRoutes);
+app.use('/campgrounds/:id/reviews', reviewRoutes);
 // Note: By default, we don't have access to the 'id' param in reviews route
 // Routes get separate params, unless 'mergeParams' is set to true
 
