@@ -14,6 +14,8 @@ module.exports.createCampground = async (req, res, next) => {
     // Note key looks like "campground[title]", etc...
     // if (!req.body.campground) throw new ExpressError('Invalid Campground Data', 400);
     const campground = new Campground(req.body.campground);
+    // Add path and filename for each image -> req.files is added by multer
+    campground.images = req.files.map(f => ({ url: f.path, filename: f.filename }));
     campground.author = req.user._id;
     await campground.save();
     req.flash('success', 'Successfully added a new campground!');

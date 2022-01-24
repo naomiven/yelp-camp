@@ -5,9 +5,38 @@
 <% layout('layouts/boilerplate') %>
     <div class="row">
         <div class="col-6">
+            <div id="campgroundCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                  <% if (campground.images.length > 1) { %> 
+                  <% campground.images.forEach((img, i) => { %>
+                  <% if (i === 0) { %>
+                  <button type="button" data-bs-target="#campgroundCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                  <% } else { %>
+                  <button type="button" data-bs-target="#campgroundCarousel" data-bs-slide-to="<%= i %>" aria-label="Slide <%= i + 1 %>"></button>
+                  <% } %> 
+                  <% }) %>
+                  <% } %> 
+                </div>
+                <div class="carousel-inner">
+                  <% campground.images.forEach((img, i) => { %>
+                  <div class="carousel-item <%= i === 0 ? 'active' : '' %> ">
+                    <img src="<%= img.url %>" class="d-block w-100" alt="">
+                  </div>
+                  <% }) %>
+                </div>
+                <% if (campground.images.length > 1) { %>
+                <button class="carousel-control-prev" type="button" data-bs-target="#campgroundCarousel" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#campgroundCarousel" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+                </button>
+                <% } %> 
+              </div>
             <div class="card mb-3">
                 <!-- margin bottom 3 to leave space b/w card and footer-->
-                <img src="<%= campground.image %>" class="card-img-top" alt="...">
                 <div class="card-body">
                     <h5 class="card-title">
                         <%= campground.title %>
