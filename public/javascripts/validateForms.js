@@ -3,6 +3,9 @@
 (function () {
     'use strict'
 
+    // For bootstrap script bs-custom-file-input.. Will not work with current bootstrap
+    // bsCustomFileInput.init();
+
     // Fetch all the forms we want to apply custom Bootstrap validation styles to
 
     const forms = document.querySelectorAll('.validated-form')

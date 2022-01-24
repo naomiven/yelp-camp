@@ -35,9 +35,19 @@ const seedDB = async () => {
             // Get random camp name
             title: `${sample(descriptors)} ${sample(places)}`,
             // Get a random photo from Unsplash Source API -> collections called 'in-the-woods'
-            image: 'https://source.unsplash.com/collection/483251',
+            // image: 'https://source.unsplash.com/collection/483251',
             description: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Autem commodi eius optio, excepturi illum obcaecati modi suscipit eligendi laboriosam, corrupti laudantium, voluptates laborum placeat facere. Assumenda laboriosam obcaecati omnis ea?',
-            price
+            price,
+            images: [
+                {
+                    "url": "https://res.cloudinary.com/duoz8rdh3/image/upload/v1642992898/YelpCamp/gscmqvfh3csv0jmvka8n.jpg",
+                    "filename": "YelpCamp/gscmqvfh3csv0jmvka8n",
+                },
+                {
+                    "url": "https://res.cloudinary.com/duoz8rdh3/image/upload/v1642992885/YelpCamp/v4gihgrd6xprzollnhkq.jpg",
+                    "filename": "YelpCamp/v4gihgrd6xprzollnhkq",
+                }
+            ]
         });
         await camp.save();
     }
