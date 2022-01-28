@@ -13,6 +13,10 @@ ImageSchema.virtual('thumbnail').get(function () {
     return this.url.replace('/upload', '/upload/w_200');
 })
 
+// Need this so that virtuals are included when doc is converted to JSON
+// (eg., in index page)
+const opts = { toJSON: { virtuals: true } };
+
 const CampgroundSchema = new Schema({
     title: String,
     geometry: {
@@ -40,7 +44,14 @@ const CampgroundSchema = new Schema({
             ref: 'Review'
         }
     ]
-});
+}, opts);
+
+// Add a virtual property to store map properties to each campground
+CampgroundSchema.virtual('properties.popUpMarkup').get(function () {
+    return `
+    <strong><a href="/campgrounds/${this._id}">${this.title}</a></strong>
+    <p>${this.description.substring(0, 20)}...</p>`;
+})
 
 // Delete reviews that are associated with a campground that is being deleted
 
