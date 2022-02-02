@@ -14,6 +14,8 @@ const methodOverride = require('method-override');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
+const helmet = require('helmet');
+
 const mongoSanitize = require('express-mongo-sanitize');
 
 const userRoutes = require('./routes/users');
@@ -56,6 +58,55 @@ const sessionConfig = {
 }
 app.use(session(sessionConfig));
 app.use(flash());
+app.use(helmet({    // Adds additional response headers for GET requests
+    // contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false
+}));
+
+const scriptSrcUrls = [
+    "https://stackpath.bootstrapcdn.com",
+    "https://api.tiles.mapbox.com",
+    "https://api.mapbox.com",
+    "https://kit.fontawesome.com",
+    "https://cdnjs.cloudflare.com",
+    "https://cdn.jsdelivr.net",
+];
+const styleSrcUrls = [
+    "https://kit-free.fontawesome.com",
+    "https://stackpath.bootstrapcdn.com",
+    "https://api.mapbox.com",
+    "https://api.tiles.mapbox.com",
+    "https://fonts.googleapis.com",
+    "https://use.fontawesome.com",
+    "https://cdn.jsdelivr.net",     // Bootstrap styles don't work unless this is here...
+];
+const connectSrcUrls = [
+    "https://api.mapbox.com",
+    "https://*.tiles.mapbox.com",
+    "https://events.mapbox.com",
+];
+const fontSrcUrls = [];
+// Only allow certain scripts, stylesheets etc to be used
+app.use(
+    helmet.contentSecurityPolicy({
+        directives: {
+            defaultSrc: [],
+            connectSrc: ["'self'", ...connectSrcUrls],
+            scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
+            styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+            workerSrc: ["'self'", "blob:"],
+            objectSrc: [],
+            imgSrc: [
+                "'self'",
+                "blob:",
+                "data:",
+                "https://res.cloudinary.com/duoz8rdh3/",
+                "https://images.unsplash.com/"
+            ],
+            fontSrc: ["'self'", ...fontSrcUrls]
+        },
+    })
+);
 
 // Initialize passport. Session must be used for persisent login
 app.use(passport.initialize());
