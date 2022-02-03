@@ -21,8 +21,12 @@ const mongoSanitize = require('express-mongo-sanitize');
 const userRoutes = require('./routes/users');
 const campgroundRoutes = require('./routes/campgrounds');
 const reviewRoutes = require('./routes/reviews');
+const MongoDBStore = require('connect-mongo');
 
-mongoose.connect('mongodb://localhost:27017/yelp-camp');
+const useDevDb = true;
+const dbUrl = useDevDb ? 'mongodb://localhost:27017/yelp-camp' : process.env.DB_URL;
+
+mongoose.connect(dbUrl);
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
@@ -43,7 +47,19 @@ app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));  // Serve static directory
 app.use(mongoSanitize());   // Prevents NoSQL injections, eg., query '$' in get request
 
+// Use Mongo for session store
+const store = MongoDBStore.create({
+    mongoUrl: dbUrl,
+    secret: 'thisshouldbeabettersecret!',
+    touchAfter: 24 * 60 * 60    // 24 hours in seconds
+})
+
+store.on('error', function (e) {
+    console.log('Session Store Error!');
+})
+
 const sessionConfig = {
+    store,
     name: 'session',   // Defined instead of default: connect.sid
     secret: 'thisshouldbeabettersecret!',
     resave: false,
