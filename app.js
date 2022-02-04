@@ -23,8 +23,7 @@ const campgroundRoutes = require('./routes/campgrounds');
 const reviewRoutes = require('./routes/reviews');
 const MongoDBStore = require('connect-mongo');
 
-const useDevDb = true;
-const dbUrl = useDevDb ? 'mongodb://localhost:27017/yelp-camp' : process.env.DB_URL;
+const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp';
 
 mongoose.connect(dbUrl);
 
@@ -47,10 +46,12 @@ app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));  // Serve static directory
 app.use(mongoSanitize());   // Prevents NoSQL injections, eg., query '$' in get request
 
+const secret = process.env.SECRET || 'thisshouldbeabettersecret!';
+
 // Use Mongo for session store
 const store = MongoDBStore.create({
     mongoUrl: dbUrl,
-    secret: 'thisshouldbeabettersecret!',
+    secret,
     touchAfter: 24 * 60 * 60    // 24 hours in seconds
 })
 
@@ -61,7 +62,7 @@ store.on('error', function (e) {
 const sessionConfig = {
     store,
     name: 'session',   // Defined instead of default: connect.sid
-    secret: 'thisshouldbeabettersecret!',
+    secret,
     resave: false,
     saveUninitialized: true,
     cookie: {
