@@ -29,33 +29,66 @@ The course uses slightly older versions of tools mentioned above, but I made sur
 - Importance of security
 - Using APIs/libs/frameworks & documentation
 
+## Developing / testing on local
+
+Ensure that `yelp-camp` db exists on local mongodb
+
+```bash
+mongo
+show dbs
+```
+
+Sample output
+
+```bash
+yelp-camp         0.000GB
+```
+
+Update `app.js` to use the local mongodb server
+
+```javascript
+const dbUrl = 'mongodb://localhost:27017/yelp-camp';
+```
+
 ## Deploying on Heroku
 
 Go to local app's top level folder
 
-    cd <path-to-local-app-repo>
+```bash
+cd <path-to-local-app-repo>
+```
 
 Login and follow instructions in the browser
 
-    heroku login
+```bash
+heroku login
+```
 
 If this is the first deployment, create an empty app
 
-    heroku create
+```bash
+heroku create
+```
 
 Check if heroku remote repo was added
 
-    git remote -v
+```bash
+git remote -v
+```
 
 Generally, I commit any changes to my personal account first
 
-    git add .
-    git commit -m "commit message"
-    git push origin main
+```bash
+git add .
+git commit -m "commit message"
+git push origin main
+```
 
 And deploy!
 
-    git push heroku main
+```bash
+git push heroku main
+```
 
 ## Tests
 
@@ -63,6 +96,8 @@ This project does not have any unit/integration tests. Most of the tests I have 
 
 Eg., Some "bad" POST/PATCH requests are not possible through the browser due to client-side validation I have set up. So to test server-side validation, I have to send requests without the browser:
 
-    import requests
-    r = requests.post('http://localhost:3000/campgrounds', {'bad_key': 'bad_value'})
-    r.content   # Show page contents
+```python
+import requests
+r = requests.post('http://localhost:3000/campgrounds', {'bad_key': 'bad_value'})
+r.content   # Show page contents
+```
